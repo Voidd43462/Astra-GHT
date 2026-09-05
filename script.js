@@ -31,10 +31,8 @@ document.addEventListener('DOMContentLoaded',()=>{
   }
   applyState();
 
-  // Lenis: smooth inertia without replacing native layout/scroll behavior.
   if(window.Lenis){const lenis=new Lenis({duration:1.1,smoothWheel:true,syncTouch:false});function raf(t){lenis.raf(t);requestAnimationFrame(raf)}requestAnimationFrame(raf);}
 
-  // GSAP: staged entrance and scroll choreography.
   if(window.gsap){if(window.ScrollTrigger)gsap.registerPlugin(ScrollTrigger);
     const m=()=>Math.max(.45,Number(state.motion)||1);
     gsap.from('.nav',{y:-30,opacity:0,duration:.9/easeFactor(),ease:'power3.out'});
@@ -48,26 +46,20 @@ document.addEventListener('DOMContentLoaded',()=>{
   }
   function easeFactor(){return Math.max(.45,Number(state.motion)||1)}
 
-  // Canvas particle field with connective lines reacting to pointer position.
   const canvas=document.getElementById('cosmic-field');const ctx=canvas?.getContext('2d');let particles=[],pointer={x:-9999,y:-9999};
   function resizeCanvas(){if(!canvas)return;canvas.width=innerWidth*devicePixelRatio;canvas.height=innerHeight*devicePixelRatio;canvas.style.width=innerWidth+'px';canvas.style.height=innerHeight+'px';ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);const count=Math.min(90,Math.floor(innerWidth/16));particles=Array.from({length:count},()=>({x:Math.random()*innerWidth,y:Math.random()*innerHeight,r:Math.random()*1.4+.25,vx:(Math.random()-.5)*.18,vy:(Math.random()-.5)*.18}))}
-  function drawField(){if(!ctx)return;ctx.clearRect(0,0,innerWidth,innerHeight);for(const p of particles){const dx=pointer.x-p.x,dy=pointer.y-p.y,dist=Math.hypot(dx,dy);if(dist<180){p.vx-=dx/dist*.003;p.vy-=dy/dist*.003}p.x+=p.vx;p.y+=p.vy;p.vx*=.999;p.vy*=.999;if(p.x<-5)p.x=innerWidth+5;if(p.x>innerWidth+5)p.x=-5;if(p.y<-5)p.y=innerHeight+5;if(p.y>innerHeight+5)p.y=-5;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle='rgba(185,255,105,.42)';ctx.fill()}
+  function drawField(){if(!ctx)return;ctx.clearRect(0,0,innerWidth,innerHeight);for(const p of particles){p.x+=p.vx;p.y+=p.vy;p.vx*=.999;p.vy*=.999;if(p.x<-5)p.x=innerWidth+5;if(p.x>innerWidth+5)p.x=-5;if(p.y<-5)p.y=innerHeight+5;if(p.y>innerHeight+5)p.y=-5;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle='rgba(185,255,105,.42)';ctx.fill()}
     for(let i=0;i<particles.length;i++)for(let j=i+1;j<particles.length;j++){const a=particles[i],b=particles[j],d=Math.hypot(a.x-b.x,a.y-b.y);if(d<105){ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.strokeStyle=`rgba(167,255,63,${(1-d/105)*.08})`;ctx.stroke()}}requestAnimationFrame(drawField)}
-  if(canvas){resizeCanvas();drawField();addEventListener('resize',resizeCanvas);addEventListener('pointermove',e=>{pointer.x=e.clientX;pointer.y=e.clientY;root.style.setProperty('--mx',((e.clientX/innerWidth-.5)*18*state.motion).toFixed(2)+'px');root.style.setProperty('--my',((e.clientY/innerHeight-.5)*12*state.motion).toFixed(2)+'px');const cards=document.querySelectorAll('.project-card');cards.forEach(card=>{const r=card.getBoundingClientRect(),gx=((e.clientX-r.left)/r.width*100).toFixed(1),gy=((e.clientY-r.top)/r.height*100).toFixed(1);if(e.clientX>=r.left&&e.clientX<=r.right&&e.clientY>=r.top&&e.clientY<=r.bottom){card.style.setProperty('--gx',gx+'%');card.style.setProperty('--gy',gy+'%')}})})}
+  if(canvas){resizeCanvas();drawField();addEventListener('resize',resizeCanvas);}
 
-  // Magnetic controls.
   document.querySelectorAll('.magnetic').forEach(el=>{el.addEventListener('pointermove',e=>{const r=el.getBoundingClientRect(),x=e.clientX-r.left-r.width/2,y=e.clientY-r.top-r.height/2;el.style.transform=`translate(${x*.12}px,${y*.12}px)`});el.addEventListener('pointerleave',()=>el.style.transform='')});
 
-  // Custom cursor on fine pointers.
-  const dot=document.querySelector('.cursor-dot'),ring=document.querySelector('.cursor-ring');let rx=0,ry=0,dx=0,dy=0;function cursorLoop(){dx+=(pointer.x-dx)*.35;dy+=(pointer.y-dy)*.35;rx+=(dx-rx)*.16;ry+=(dy-ry)*.16;if(dot){dot.style.transform=`translate(${dx-4}px,${dy-4}px)`;dot.style.opacity=pointer.x<0?0:1}if(ring){ring.style.transform=`translate(${rx}px,${ry}px)`;ring.style.opacity=pointer.x<0?0:1}requestAnimationFrame(cursorLoop)}cursorLoop();document.querySelectorAll('a,button,.project-card').forEach(el=>{el.addEventListener('mouseenter',()=>ring&&ring.classList.add('cursor-active'));el.addEventListener('mouseleave',()=>ring&&ring.classList.remove('cursor-active'))});
+  const dot=document.querySelector('.cursor-dot'),ring=document.querySelector('.cursor-ring');if(dot)dot.style.display='none';if(ring)ring.style.display='none';
 
-  // Reveal fallback for browsers without ScrollTrigger.
   const reveal=[...document.querySelectorAll('.project-card,.skill-item,.about-card,.contact')];const io=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');io.unobserve(e.target)}}),{threshold:.12});reveal.forEach(el=>{el.classList.add('reveal');io.observe(el)});
 
-  // Anchor links.
   document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{const id=a.getAttribute('href');if(id&&id.length>1){const target=document.querySelector(id);if(target){e.preventDefault();target.scrollIntoView({behavior:'smooth',block:'start'})}}}));
 
-  // Studio panel.
   const studio=document.getElementById('studio'),openBtns=[...document.querySelectorAll('.studio-open')],closeBtn=document.querySelector('.studio-close'),backdrop=document.querySelector('.studio-backdrop');
   const heroTitle=document.getElementById('edit-hero-title'),heroLead=document.getElementById('edit-hero-lead'),aboutTitle=document.getElementById('edit-about-title'),aboutText=document.getElementById('edit-about-text'),range=document.getElementById('motion-intensity'),accent=document.getElementById('accent-color'),projectList=document.getElementById('studio-project-list');
   function fillStudio(){heroTitle.value=state.hero.title;heroLead.value=state.hero.lead;aboutTitle.value=state.about.title;aboutText.value=state.about.text;range.value=state.motion;accent.value=state.accent;document.querySelector('[data-toggle="hero-orbit"]')?.classList.toggle('active',state.orbit);projectList.innerHTML=Object.entries(state.projectsData).map(([key,p])=>`<div class="studio-project"><b>${key.toUpperCase()}</b><input data-field="${key}.title" value="${escapeHtml(p.title)}"><textarea data-field="${key}.description">${escapeHtml(p.description)}</textarea></div>`).join('')}
@@ -79,4 +71,6 @@ document.addEventListener('DOMContentLoaded',()=>{
   document.getElementById('studio-reset')?.addEventListener('click',()=>{state=JSON.parse(JSON.stringify(defaults));localStorage.removeItem('astra-ght-studio');applyState();fillStudio()});
   document.getElementById('studio-export')?.addEventListener('click',()=>{const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='astra-ght-content.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500)});
   document.getElementById('studio-import')?.addEventListener('change',e=>{const file=e.target.files?.[0];if(!file)return;const reader=new FileReader();reader.onload=()=>{try{state=deepMerge(JSON.parse(JSON.stringify(defaults)),JSON.parse(reader.result));localStorage.setItem('astra-ght-studio',JSON.stringify(state));applyState();fillStudio()}catch(err){alert('Не удалось прочитать JSON-файл.')}};reader.readAsText(file)});
+
+  const refine=document.createElement('style');refine.textContent=`.nav nav{gap:16px}@media(max-width:820px){.nav nav{gap:12px}}.cursor-dot,.cursor-ring{display:none!important}.project-card:after{display:none!important}`;document.head.appendChild(refine);
 });
