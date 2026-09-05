@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded',()=>{
     projects:{intro:'Подборка проектов и направлений, над которыми я работал.'},
     skills:{intro:'Собираю решения вокруг задачи, а не вокруг конкретного инструмента.'},
     about:{title:'Денис — разработчик, который любит превращать идеи в рабочие системы.',text:'Мне интересны продукты на стыке программирования, автоматизации, web и игр. Я люблю разбираться в архитектуре, собирать прототип, доводить интерфейс до аккуратного состояния и затем превращать всё это в поддерживаемый проект.'},
-    contact:{text:'Напишите мне и расскажите, что нужно сделать. Можно коротко — разберём задачу вместе.'},
+    contact:{text:'Напишите мне через Telegram или используйте чат на сайте. Почта для связи больше не используется.'},
     skillsData:{
       1:{title:'Web Development',text:'Лендинги, портфолио, панели, интерактивные интерфейсы и интеграции.'},
       2:{title:'Automation Systems',text:'Автоматизация процессов, планировщики и рабочие сценарии.'},
@@ -14,10 +14,10 @@ document.addEventListener('DOMContentLoaded',()=>{
       4:{title:'GameDev & Minecraft',text:'Моды, механики, ресурсы, серверные системы, карты и прототипирование.'}
     },
     projectsData:{
-      channel:{title:'Channel Manager',description:'Система управления Telegram-каналами: стратегия, планирование контента, аналитика, эксперименты и память проекта.',tags:['Telegram','Automation','Analytics'],type:'channel'},
-      sculk:{title:'Sculk Magic',description:'Мод с собственной системой Resonance и магией, вдохновлённой механиками Echo и Sculk.',tags:['Minecraft','NeoForge','GameDev'],type:'sculk'},
-      bots:{title:'Bot Systems',description:'Discord и Telegram-боты с командами, логикой, автоматизацией, конфигурацией и web-панелями.',tags:['Python','Discord','Telegram'],type:'bots'},
-      web:{title:'Web Products',description:'Современные сайты и панели управления с адаптивной вёрсткой, анимациями и интеграциями.',tags:['Frontend','UI/UX','Deploy'],type:'web'}
+      channel:{title:'Channel Manager',description:'Система управления Telegram-каналами: стратегия, планирование контента, аналитика, эксперименты и память проекта.',tags:['Telegram','Automation','Analytics'],type:'channel',url:'',short:'Панель управления Telegram-каналом',details:'Система для планирования публикаций, аналитики и экспериментов.',features:['Планирование контента','Аналитика','Эксперименты','Управление несколькими каналами'],images:[]},
+      sculk:{title:'Sculk Magic',description:'Мод с собственной системой Resonance и магией, вдохновлённой механиками Echo и Sculk.',tags:['Minecraft','NeoForge','GameDev'],type:'sculk',url:'',short:'Магический мод для Minecraft',details:'Система Resonance, заклинания, древняя атмосфера Sculk и экспериментальные игровые механики.',features:['Resonance','Заклинания','Sculk-механики','NeoForge'],images:[]},
+      bots:{title:'Bot Systems',description:'Discord и Telegram-боты с командами, логикой, автоматизацией, конфигурацией и web-панелями.',tags:['Python','Discord','Telegram'],type:'bots',url:'',short:'Discord и Telegram-боты',details:'Набор систем для автоматизации, команд, ролей, логов и интеграций.',features:['Команды','Автоматизация','Роли и права','Логи','Web-панели'],images:[]},
+      web:{title:'Web Products',description:'Современные сайты и панели управления с адаптивной вёрсткой, анимациями и интеграциями.',tags:['Frontend','UI/UX','Deploy'],type:'web',url:'',short:'Интерактивные web-продукты',details:'Сайт или приложение можно открыть прямо внутри портфолио и пользоваться им как обычным web-интерфейсом.',features:['Адаптивность','Интерактивность','Анимации','Интеграции'],images:[]}
     },
     accent:'#a7ff3f',motion:1,orbit:true
   };
@@ -29,7 +29,8 @@ document.addEventListener('DOMContentLoaded',()=>{
   const id=v=>document.getElementById(v);
   function renderProjects(){
     const grid=id('project-grid'); if(!grid)return;
-    grid.innerHTML=Object.entries(state.projectsData).map(([key,p])=>`<article class="project-card reveal-up" data-project="${safe(key)}" data-edit-project="${safe(key)}"><div class="project-art art-${safe(p.type||'web')}">${artMarkup(p)}</div><div class="project-info"><div class="tags">${(p.tags||[]).map(t=>`<span>${safe(t)}</span>`).join('')}</div><h3>${safe(p.title)}</h3><p>${safe(p.description)}</p><a href="#contact">Подробнее ↗</a></div></article>`).join('');
+    grid.innerHTML=Object.entries(state.projectsData).map(([key,p])=>`<article class="project-card reveal-up project-clickable" data-project="${safe(key)}" data-edit-project="${safe(key)}" tabindex="0" role="button"><div class="project-art art-${safe(p.type||'web')}">${artMarkup(p)}</div><div class="project-info"><div class="tags">${(p.tags||[]).map(t=>`<span>${safe(t)}</span>`).join('')}</div><h3>${safe(p.title)}</h3><p>${safe(p.description)}</p><span class="project-link">${p.type==='web'&&p.url?'Открыть сайт ↗':'Смотреть проект ↗'}</span></div></article>`).join('');
+    bindProjectCards();
   }
   function artMarkup(p){
     if(p.type==='channel')return '<span class="art-label">CHANNEL MANAGER</span><div class="mini-dashboard"><div class="mini-head"><span>Growth</span><b>+34.8%</b></div><div class="mini-bars"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div>';
@@ -70,8 +71,26 @@ document.addEventListener('DOMContentLoaded',()=>{
   function draw(){if(!ctx)return;ctx.clearRect(0,0,innerWidth,innerHeight);for(const p of particles){p.x+=p.vx;p.y+=p.vy;if(p.x<0)p.x=innerWidth;if(p.x>innerWidth)p.x=0;if(p.y<0)p.y=innerHeight;if(p.y>innerHeight)p.y=0;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle='rgba(185,255,105,.3)';ctx.fill()}requestAnimationFrame(draw)}
   if(canvas){resize();draw();addEventListener('resize',resize)}
 
+  const viewer=id('project-viewer');
+  function bindProjectCards(){document.querySelectorAll('.project-clickable').forEach(card=>{
+    const activate=()=>{if(editMode)return;const key=card.dataset.project;openProject(key)};
+    card.onclick=activate;card.onkeydown=e=>{if((e.key==='Enter'||e.key===' ')&&!editMode){e.preventDefault();activate()}};
+  })}
+  function openProject(key){
+    const p=state.projectsData[key];if(!p||!viewer)return;
+    if(p.type==='web'&&p.url){
+      viewer.innerHTML=`<div class="pv-shell pv-browser"><div class="pv-top"><div><span class="pv-dot"></span><strong>${safe(p.title)}</strong></div><div class="pv-actions"><a href="${safe(p.url)}" target="_blank" rel="noreferrer">Открыть отдельно ↗</a><button data-pv-close aria-label="Закрыть">×</button></div></div><iframe src="${safe(p.url)}" title="${safe(p.title)}" loading="eager" allow="fullscreen"></iframe></div>`;
+    }else{
+      const imgs=(p.images||[]).filter(Boolean);
+      viewer.innerHTML=`<div class="pv-shell pv-details"><div class="pv-top"><div><span class="pv-kicker">PROJECT</span><strong>${safe(p.title)}</strong></div><button data-pv-close aria-label="Закрыть">×</button></div><div class="pv-content"><div class="pv-gallery">${imgs.length?imgs.map((src,i)=>`<img src="${safe(src)}" alt="${safe(p.title)} — скриншот ${i+1}" loading="lazy">`).join(''):'<div class="pv-placeholder">Добавь фотографии проекта через Astra Studio</div>'}</div><div class="pv-copy"><div class="tags">${(p.tags||[]).map(t=>`<span>${safe(t)}</span>`).join('')}</div><p class="pv-short">${safe(p.short||'Проект')}</p><p>${safe(p.details||p.description)}</p><h4>Что внутри</h4><div class="pv-features">${(p.features||[]).map(x=>`<span>${safe(x)}</span>`).join('')}</div></div></div></div>`;
+    }
+    viewer.classList.add('open');viewer.setAttribute('aria-hidden','false');document.body.classList.add('viewer-open');viewer.querySelector('[data-pv-close]')?.addEventListener('click',closeProject);viewer.onclick=e=>{if(e.target===viewer)closeProject()};
+  }
+  function closeProject(){viewer?.classList.remove('open');viewer?.setAttribute('aria-hidden','true');document.body.classList.remove('viewer-open')}
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeProject()});
+
   const editor=id('visual-editor'),editorMode=id('editor-mode'),body=id('ve-body'),editorTitle=id('ve-title'),selection=id('editor-selection');
-  function enterEditor(){editMode=true;editorMode.classList.add('active');editorMode.setAttribute('aria-hidden','false');document.body.classList.add('editing');dirty=false;selection.textContent='Нажми на элемент страницы';bindEditorTargets();window.scrollTo({top:0,behavior:'smooth'});}
+  function enterEditor(){editMode=true;editorMode.classList.add('active');editorMode.setAttribute('aria-hidden','false');document.body.classList.add('editing');dirty=false;selection.textContent='Нажми на элемент страницы';bindEditorTargets();bindProjectCards();window.scrollTo({top:0,behavior:'smooth'});}
   function exitEditor(){if(dirty&&!confirm('Есть несохранённые изменения. Выйти без сохранения?'))return;editMode=false;selected=null;editorMode.classList.remove('active');editorMode.setAttribute('aria-hidden','true');editor.classList.remove('open');editor.setAttribute('aria-hidden','true');document.body.classList.remove('editing');}
   function openInspector(kind,key,element){selected={kind,key,element};editor.classList.add('open');editor.setAttribute('aria-hidden','false');editorTitle.textContent=kind==='project'?'Проект':kind==='stack'?'Стек':key;selection.textContent=`Редактирование: ${kind==='project'?'карточка проекта':key}`;buildInspector();}
   function bindEditorTargets(){
@@ -86,8 +105,8 @@ document.addEventListener('DOMContentLoaded',()=>{
     if(!body||!selected)return;
     if(selected.kind==='project'){
       const p=state.projectsData[selected.key];
-      body.innerHTML=`<div class="ve-section"><div class="ve-kicker">PROJECT / ${selected.key.toUpperCase()}</div>${inputRow('Название',p.title,'ve-p-title')}${inputRow('Описание',p.description,'ve-p-desc','textarea')}${inputRow('Теги',(p.tags||[]).join(', '),'ve-p-tags')}<div class="ve-actions"><button class="ve-save" id="ve-apply-project">Применить</button><button class="ve-danger" id="ve-delete-project">Удалить карточку</button></div></div>`;
-      id('ve-apply-project').onclick=()=>{p.title=id('ve-p-title').value.trim()||p.title;p.description=id('ve-p-desc').value.trim();p.tags=id('ve-p-tags').value.split(',').map(x=>x.trim()).filter(Boolean);dirty=true;render();openInspector('project',selected.key,document.querySelector(`[data-edit-project="${CSS.escape(selected.key)}"]`));};
+      body.innerHTML=`<div class="ve-section"><div class="ve-kicker">PROJECT / ${selected.key.toUpperCase()}</div>${inputRow('Название',p.title,'ve-p-title')}${inputRow('Описание',p.description,'ve-p-desc','textarea')}${inputRow('Короткое описание',p.short||'','ve-p-short')}${inputRow('Теги',(p.tags||[]).join(', '),'ve-p-tags')}${inputRow('URL сайта',p.url||'','ve-p-url')}${inputRow('Подробности',p.details||'','ve-p-details','textarea')}${inputRow('Функции / пункты',(p.features||[]).join('\n'),'ve-p-features','textarea')}${inputRow('Фотографии / URL по одному в строке',(p.images||[]).join('\n'),'ve-p-images','textarea')}<div class="ve-actions"><button class="ve-save" id="ve-apply-project">Применить</button><button class="ve-danger" id="ve-delete-project">Удалить карточку</button></div></div>`;
+      id('ve-apply-project').onclick=()=>{p.title=id('ve-p-title').value.trim()||p.title;p.description=id('ve-p-desc').value.trim();p.short=id('ve-p-short').value.trim();p.tags=id('ve-p-tags').value.split(',').map(x=>x.trim()).filter(Boolean);p.url=id('ve-p-url').value.trim();p.details=id('ve-p-details').value.trim();p.features=id('ve-p-features').value.split(/\n+/).map(x=>x.trim()).filter(Boolean);p.images=id('ve-p-images').value.split(/\n+/).map(x=>x.trim()).filter(Boolean);dirty=true;render();openInspector('project',selected.key,document.querySelector(`[data-edit-project="${CSS.escape(selected.key)}"]`));};
       id('ve-delete-project').onclick=()=>{if(!confirm(`Удалить проект «${p.title}»?`))return;delete state.projectsData[selected.key];dirty=true;editor.classList.remove('open');render();};
       return;
     }
