@@ -13,6 +13,8 @@
   <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/lenis@1.3.8/dist/lenis.min.js"></script>
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles-refine.css">
+  <link rel="stylesheet" href="studio-auth.css">
 </head>
 <body>
   <canvas id="cosmic-field" aria-hidden="true"></canvas>
@@ -80,11 +82,12 @@
         <section class="studio-section"><div class="studio-section-title">Обо мне</div><label>Заголовок<textarea id="edit-about-title" rows="3"></textarea></label><label>Текст<textarea id="edit-about-text" rows="5"></textarea></label></section>
         <section class="studio-section"><div class="studio-section-title">Проекты</div><div class="studio-project-list" id="studio-project-list"></div></section>
         <section class="studio-section studio-actions"><button class="button primary" id="studio-save" type="button">Сохранить</button><button class="button ghost" id="studio-reset" type="button">Сбросить</button><button class="button ghost" id="studio-export" type="button">Экспорт JSON</button><label class="button ghost file-button" for="studio-import">Импорт JSON</label><input id="studio-import" type="file" accept="application/json" hidden></section>
-        <p class="studio-note">Изменения сохраняются в браузере через localStorage. Для управления публичной версией сайта с любого устройства потребуется подключить backend/CMS.</p>
+        <p class="studio-note">Изменения сохраняются в браузере через localStorage. Для управления публичной версией сайта с любого устройства используется серверная авторизация; публикация изменений в репозиторий пока не подключена.</p>
       </div>
     </div>
   </aside>
 
   <script src="script.js"></script>
+  <script src="studio-auth.js"></script>
 </body>
 </html>
