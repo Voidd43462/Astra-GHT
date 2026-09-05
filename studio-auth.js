@@ -40,7 +40,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function closeAuth() {
-    pendingOpen = false;
     shell.classList.remove('open');
   }
 
@@ -65,8 +64,10 @@ document.addEventListener('DOMContentLoaded', () => {
       const data = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(data.error || 'Не удалось выполнить вход');
       authenticated = true;
+      const shouldOpen = pendingOpen;
+      pendingOpen = false;
       closeAuth();
-      if (pendingOpen) document.querySelector('.studio-open')?.click();
+      if (shouldOpen) document.querySelector('.studio-open')?.click();
     } catch (err) {
       error.textContent = err.message || 'Ошибка авторизации';
       password.select();
@@ -75,8 +76,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  shell.querySelector('[data-auth-cancel]').addEventListener('click', closeAuth);
-  shell.addEventListener('click', (event) => { if (event.target === shell) closeAuth(); });
+  shell.querySelector('[data-auth-cancel]').addEventListener('click', () => { pendingOpen = false; closeAuth(); });
+  shell.addEventListener('click', (event) => { if (event.target === shell) { pendingOpen = false; closeAuth(); } });
 
   // Capture phase blocks the existing Studio click/shortcut until the server session is valid.
   document.addEventListener('click', (event) => {
