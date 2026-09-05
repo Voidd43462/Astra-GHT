@@ -2,7 +2,7 @@
 
 **Astra-GHT — Advanced Software, Technology & Research**
 
-Персональное портфолио Дениса: web-разработка, AI, автоматизация, Discord/Telegram-боты и Minecraft/GameDev.
+Персональное портфолио Дениса: web-разработка, автоматизация, Discord/Telegram-боты и Minecraft/GameDev.
 
 ## Запуск локально
 
