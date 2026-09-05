@@ -1,7 +1,9 @@
 const crypto = require('node:crypto');
 
 const COOKIE = 'astra_studio_session';
-const MAX_AGE = 60 * 60 * 8;
+// Persistent admin login: the browser stays authorized for one year.
+// Logging out or clearing site cookies invalidates the local session.
+const MAX_AGE = 60 * 60 * 24 * 365;
 const attempts = new Map();
 
 function secret() {
