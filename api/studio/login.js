@@ -1,9 +1,7 @@
 const crypto = require('node:crypto');
 
 const COOKIE = 'astra_studio_session';
-// Persistent admin login: the browser stays authorized for one year.
-// Logging out or clearing site cookies invalidates the local session.
-const MAX_AGE = 60 * 60 * 24 * 365;
+const MAX_AGE = 60 * 60 * 24 * 3650; // 10 years
 const attempts = new Map();
 
 function secret() {
@@ -12,14 +10,6 @@ function secret() {
 
 function sign(value) {
   return crypto.createHmac('sha256', secret()).update(value).digest('base64url');
-}
-
-function parseCookies(req) {
-  const raw = req.headers.cookie || '';
-  return Object.fromEntries(raw.split(';').filter(Boolean).map(part => {
-    const i = part.indexOf('=');
-    return [part.slice(0, i).trim(), decodeURIComponent(part.slice(i + 1).trim())];
-  }));
 }
 
 function safeEqual(a, b) {
@@ -43,7 +33,9 @@ module.exports = async (req, res) => {
   const key = clientKey(req);
   const now = Date.now();
   const state = attempts.get(key) || { fails: 0, blockedUntil: 0 };
-  if (state.blockedUntil > now) return res.status(429).json({ ok: false, error: 'Слишком много попыток. Попробуйте позже.' });
+  if (state.blockedUntil > now) {
+    return res.status(429).json({ ok: false, error: 'Слишком много попыток. Попробуйте позже.' });
+  }
   if (state.blockedUntil && state.blockedUntil <= now) {
     state.fails = 0;
     state.blockedUntil = 0;
@@ -65,7 +57,10 @@ module.exports = async (req, res) => {
   }
 
   attempts.delete(key);
-  const payload = Buffer.from(JSON.stringify({ exp: Math.floor(now / 1000) + MAX_AGE, nonce: crypto.randomBytes(18).toString('hex') })).toString('base64url');
+  const payload = Buffer.from(JSON.stringify({
+    exp: Math.floor(now / 1000) + MAX_AGE,
+    nonce: crypto.randomBytes(18).toString('hex')
+  })).toString('base64url');
   const token = `${payload}.${sign(payload)}`;
   res.setHeader('Set-Cookie', `${COOKIE}=${encodeURIComponent(token)}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=${MAX_AGE}`);
   return res.status(200).json({ ok: true });
