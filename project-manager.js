@@ -1,22 +1,7 @@
 document.addEventListener('DOMContentLoaded',()=>{
   let editing=false;
-  const safe=v=>{const d=document.createElement('div');d.textContent=v??'';return d.innerHTML};
-  function addCreate(){
-    if(!editing)return;
-    const grid=document.getElementById('project-grid');if(!grid||grid.querySelector('.project-create'))return;
-    const button=document.createElement('button');button.className='project-create';button.type='button';button.innerHTML='<span>＋ Создать новый проект</span>';
-    button.addEventListener('click',()=>{
-      let state;
-      try{state=JSON.parse(localStorage.getItem('astra-ght-studio')||'null')}catch{state=null}
-      if(!state||!state.projectsData){alert('Сначала открой Studio и выполни вход.');return}
-      const base='project';let n=1;while(state.projectsData[`${base}${n}`])n++;
-      const title=`Новый проект ${n}`;
-      state.projectsData[`${base}${n}`]={title,description:'Описание нового проекта.',tags:['New'],type:'web'};
-      localStorage.setItem('astra-ght-studio',JSON.stringify(state));
-      location.reload();
-    });
-    grid.appendChild(button);
-  }
-  window.addEventListener('astra:studio-authenticated',()=>{editing=true;setTimeout(addCreate,80)});
-  document.addEventListener('click',()=>{if(editing)addCreate()},true);
+  const grid=()=>document.getElementById('project-grid');
+  function ensureState(){let state;try{state=JSON.parse(localStorage.getItem('astra-ght-studio')||'null')}catch{state=null}if(!state)state={projectsData:{}};if(!state.projectsData)state.projectsData={};if(Object.keys(state.projectsData).length===0){document.querySelectorAll('#project-grid .project-card').forEach((card,i)=>{const key=card.dataset.project||`project${i+1}`;state.projectsData[key]={title:card.querySelector('h3')?.textContent||key,description:card.querySelector('p')?.textContent||'',tags:[...card.querySelectorAll('.tags span')].map(x=>x.textContent.trim()),type:[...card.querySelector('.project-art')?.classList||[]].find(x=>x.startsWith('art-'))?.slice(4)||'web'}})}return state}
+  function addCreate(){if(!editing)return;const g=grid();if(!g||g.querySelector('.project-create'))return;const button=document.createElement('button');button.className='project-create';button.type='button';button.innerHTML='<span>＋ Создать новый проект</span>';button.addEventListener('click',()=>{const state=ensureState();let n=1,key=`project${n}`;while(state.projectsData[key]){n++;key=`project${n}`}state.projectsData[key]={title:`Новый проект ${n}`,description:'Описание нового проекта.',tags:['New'],type:'web'};localStorage.setItem('astra-ght-studio',JSON.stringify(state));location.reload()});g.appendChild(button)}
+  window.addEventListener('astra:studio-authenticated',()=>{editing=true;setTimeout(addCreate,120)});document.addEventListener('click',()=>{if(editing)addCreate()},true);
 });
