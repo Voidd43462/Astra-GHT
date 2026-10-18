@@ -20,8 +20,8 @@
       text: 'Современные сайты и панели управления с адаптивной вёрсткой, анимациями и интеграциями.',
       tags: ['Frontend', 'UI/UX', 'Deploy'],
       demos: [
-        { name: 'Провансальский букет', url: 'https://provansky-buket.vercel.app' },
-        { name: 'Penny Shop', url: 'https://penny-shop.vercel.app' }
+        { name: 'Прованский букет', url: 'https://provansky-buket.vercel.app', images: ['img/buket-home.jpg', 'img/buket-catalog.jpg', 'img/buket-mobile.jpg'] },
+        { name: 'ПЕННЫЙ', url: 'https://penny-shop.vercel.app', images: ['img/penny-home.jpg', 'img/penny-catalog.jpg', 'img/penny-mobile.jpg'] }
       ],
       features: ['Адаптивность', 'Интерактивность', 'Анимации', 'Интеграции'] }
   ];
@@ -64,16 +64,20 @@
   const modal = $('#modal'), viewer = $('#viewer');
   const safeUrl = u => /^https?:\/\//i.test(u) ? u : '#';
 
-  function openViewer(p, idx = 0) {
-    const d = p.demos[idx];
+  function openViewer(p, idx = 0, shot = 0) {
+    const d = p.demos[idx], imgs = (d.images || []).filter(u => /^(img\/|https?:\/\/)/.test(u));
+    const url = esc(safeUrl(d.url));
     $('#viewer-body').innerHTML = `
       <div class="v-bar"><h3>${esc(p.title)}</h3>
         <div class="v-tabs">${p.demos.length > 1 ? p.demos.map((x, j) => `<button type="button" data-j="${j}" class="${j === idx ? 'on' : ''}">${esc(x.name)}</button>`).join('') : ''}</div>
-        <a href="${esc(safeUrl(d.url))}" target="_blank" rel="noreferrer">Открыть отдельно ↗</a>
+        <a class="v-open" href="${url}" target="_blank" rel="noreferrer">Открыть сайт ↗</a>
         <button class="v-x" type="button" aria-label="Закрыть">×</button></div>
-      <div class="v-frame"><iframe src="${esc(safeUrl(d.url))}" title="${esc(d.name)}" allow="fullscreen; clipboard-write"></iframe>
-        <div class="v-note">Если сайт не отображается, нажмите «Открыть отдельно».</div></div>`;
+      ${imgs.length ? `
+        <div class="v-stage"><img src="${esc(imgs[shot])}" alt="${esc(d.name)} — скриншот ${shot + 1}" class="${/mobile/.test(imgs[shot]) ? 'phone' : ''}"></div>
+        <div class="v-thumbs">${imgs.map((u, k) => `<button type="button" data-k="${k}" class="${k === shot ? 'on' : ''}" aria-label="Скриншот ${k + 1}"><img src="${esc(u)}" alt=""></button>`).join('')}</div>`
+      : `<div class="v-stage empty"><p>${esc(d.name)}</p><a class="btn solid" href="${url}" target="_blank" rel="noreferrer">Открыть сайт ↗</a></div>`}`;
     $('.v-tabs', viewer).onclick = e => { const b = e.target.closest('button'); if (b) openViewer(p, +b.dataset.j); };
+    const th = $('.v-thumbs', viewer); if (th) th.onclick = e => { const b = e.target.closest('button'); if (b) openViewer(p, idx, +b.dataset.k); };
     if (!viewer.open) viewer.showModal();
   }
   viewer.addEventListener('click', e => { if (e.target.closest('.v-x')) viewer.close(); });
@@ -175,7 +179,7 @@
       const p = projects[+el.dataset.i], f = k => el.querySelector(`[data-f=${k}]`);
       p.title = f('title').value.trim() || 'Без названия'; p.short = f('short').value; p.text = f('text').value;
       p.tags = toList(f('tags').value); p.features = toList(f('features').value);
-      p.demos = textToDemos(f('demos').value); p.private = f('private').checked; p.tg = f('tg').checked && !p.private;
+      const old = p.demos || []; p.demos = textToDemos(f('demos').value).map(d => ({ ...d, images: old.find(o => o.url === d.url)?.images || [] })); p.private = f('private').checked; p.tg = f('tg').checked && !p.private;
     });
   }
   async function persist() {

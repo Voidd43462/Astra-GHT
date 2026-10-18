@@ -13,7 +13,11 @@ function clean(p, i) {
     features: list(p.features),
     demos: (Array.isArray(p.demos) ? p.demos : [])
       .filter(d => d && /^https?:\/\//i.test(d.url))
-      .map(d => ({ name: String(d.name || d.url).slice(0, 100), url: String(d.url).slice(0, 500) }))
+      .map(d => ({
+        name: String(d.name || d.url).slice(0, 100),
+        url: String(d.url).slice(0, 500),
+        images: (Array.isArray(d.images) ? d.images : []).filter(u => /^(img\/|https?:\/\/)/.test(u)).map(u => String(u).slice(0, 500)).slice(0, 10)
+      }))
       .slice(0, 10),
     private: Boolean(p.private),
     tg: Boolean(p.tg) && !p.private
