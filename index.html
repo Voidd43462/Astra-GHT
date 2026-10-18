@@ -3,35 +3,114 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="Astra-GHT — Advanced Software, Technology & Research. Моё портфолио: сайты, системы автоматизации, Discord/Telegram-боты и Minecraft-проекты.">
-  <meta name="theme-color" content="#07080b">
-  <title>Astra-GHT — Advanced Software, Technology & Research</title>
+  <meta name="description" content="Astra-GHT — студия Дениса: сайты, боты, автоматизация и игровые проекты. От идеи до готового продукта.">
+  <meta name="theme-color" content="#f3efe6">
+  <title>Astra-GHT — сайты, боты и игровые проекты</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-  <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
-  <link rel="stylesheet" href="background-animations.css">
-  <link rel="stylesheet" href="studio-auth.css">
-  <link rel="stylesheet" href="visual-editor.css">
 </head>
 <body>
-  <canvas id="cosmic-field" aria-hidden="true"></canvas>
-  <div class="ambient ambient-a"></div><div class="ambient ambient-b"></div><div class="ambient ambient-c"></div>
-  <div class="background-grid" aria-hidden="true"></div><div class="grain" aria-hidden="true"></div>
-  <header class="site-header"><a class="brand" href="#top"><span class="brand-mark">A</span><span>Astra-GHT</span></a><nav class="site-nav" aria-label="Основная навигация"><a href="#projects">Проекты</a><a href="#skills">Навыки</a><a href="#about">Обо мне</a><a href="#contact">Контакты</a></nav><button class="studio-open studio-trigger" type="button">Studio</button></header>
-  <div id="editor-mode" aria-hidden="true"><div class="editor-edge-glow"></div><div class="editor-topbar"><div><strong>ASTRA STUDIO</strong><span id="editor-selection">Выберите элемент на странице</span></div><div class="editor-top-actions"><button id="editor-exit" type="button">Выйти</button><button id="editor-save" type="button">Сохранить</button></div></div></div>
+  <header class="nav" id="nav">
+    <a class="logo" href="#top" aria-label="Astra-GHT"><i></i>astra<b>/</b>ght</a>
+    <nav aria-label="Основная навигация">
+      <a href="#works">Работы</a>
+      <a href="#craft">Ремесло</a>
+      <a href="#me">Автор</a>
+      <a href="#contact">Связь</a>
+    </nav>
+    <div class="nav-end">
+      <button class="theme" id="theme" type="button" aria-label="Сменить тему"><span></span></button>
+      <a class="pill" href="https://t.me/Astra_GHT" target="_blank" rel="noreferrer">Написать ↗</a>
+    </div>
+  </header>
+
   <main id="top">
-    <section class="hero shell"><div class="hero-copy reveal-up"><p class="eyebrow" data-edit-key="hero.eyebrow" data-edit-type="text"><span class="status-dot"></span>РАЗРАБОТКА · АВТОМАТИЗАЦИЯ · GAMEDEV</p><h1 data-edit-key="hero.title" data-edit-type="richtext">Astra-GHT — <span class="accent">Advanced Software, Technology & Research</span></h1><p class="hero-lead" data-edit-key="hero.lead" data-edit-type="text">Я делаю сайты, ботов, автоматизацию и игровые проекты. Мне нравится брать идею, разбираться в том, как она должна работать, и доводить её до нормального готового продукта.</p><div class="hero-actions"><a class="button primary" href="#projects">Посмотреть мои проекты <span>↓</span></a><a class="button secondary" href="#contact">Связаться со мной <span>↗</span></a></div><div class="stack-line"><span class="stack-label">ЧЕМ РАБОТАЮ</span><div class="chips" data-edit-key="stack" data-edit-type="list"><span>Python</span><span>JavaScript</span><span>Minecraft</span><span>Web</span></div></div><div class="stack-line"><span class="stack-label">ФРЕЙМВОРКИ И ТЕХНОЛОГИИ</span><div class="chips" data-edit-key="technologies" data-edit-type="list"><span>React</span><span>Node.js</span><span>NeoForge</span><span>Fabric</span><span>Forge</span><span>GeckoLib</span><span>Fabric API</span><span>discord.py</span><span>Telegram Bot API</span><span>OpenAI API</span><span>Gemini API</span><span>Git</span><span>GitHub</span><span>Vercel</span><span>systemd</span></div></div></div><div class="hero-visual reveal-scale"><div class="hero-grid"></div><div class="orbit o1"></div><div class="orbit o2"></div><div class="orbit o3"></div><div class="orbit-dash"></div><div class="core-wrap"><div class="core">A</div></div><span class="orbit-tag t1">CODE</span><span class="orbit-tag t2">WEB</span><span class="orbit-tag t3">BOT</span><span class="orbit-tag t4">GAME</span></div></section>
-    <section id="projects" class="section shell"><div class="section-head reveal-up"><div><p class="eyebrow">МОИ ПРОЕКТЫ</p><h2>Что я делал</h2></div><p data-edit-key="projects.intro" data-edit-type="text">Здесь я собираю проекты, которыми действительно занимался: от отдельных инструментов до полноценных систем и игровых идей.</p></div><div id="project-grid" class="project-grid"></div></section>
-    <section id="skills" class="section shell skills-section"><div class="section-head reveal-up"><div><p class="eyebrow">МОИ НАВЫКИ</p><h2>Что умею</h2></div><p data-edit-key="skills.intro" data-edit-type="text">Я не привязываюсь к одному стеку. Смотрю на задачу, выбираю подходящие инструменты и собираю решение под неё.</p></div><div class="skills-grid"><div class="skill reveal-up" data-edit-key="skills.1" data-edit-type="skill"><span>01</span><div><h3>Web-разработка</h3><p>Делаю сайты, портфолио, панели управления и интерактивные интерфейсы.</p></div></div><div class="skill reveal-up" data-edit-key="skills.2" data-edit-type="skill"><span>02</span><div><h3>Автоматизация</h3><p>Автоматизирую рутинные процессы, планирование и рабочие сценарии.</p></div></div><div class="skill reveal-up" data-edit-key="skills.3" data-edit-type="skill"><span>03</span><div><h3>Боты и системы</h3><p>Собираю Discord и Telegram-ботов, команды, роли, базы, логи и web-панели.</p></div></div><div class="skill reveal-up" data-edit-key="skills.4" data-edit-type="skill"><span>04</span><div><h3>Minecraft и GameDev</h3><p>Работаю с модами, механиками, ресурсами, серверными системами и прототипами.</p></div></div></div></section>
-    <section id="about" class="section shell about-section"><div class="about-card reveal-up"><div class="about-index">A<span>/</span>01</div><div class="about-copy"><p class="eyebrow">НЕМНОГО ОБО МНЕ</p><h2 data-edit-key="about.title" data-edit-type="text">Я Денис. Люблю разбираться в сложных штуках и превращать идеи в рабочие проекты.</h2><p data-edit-key="about.text" data-edit-type="text">Большую часть времени я что-то собираю, переделываю или изучаю. Мне интересно не просто написать код, а понять всю систему целиком: как она устроена, как ей будут пользоваться и что можно сделать лучше. Поэтому в моих проектах есть и разработка, и интерфейсы, и автоматизация, и игровые механики.</p><div class="about-meta"><span>Собираю свои проекты</span><span>RU / EN</span><span>Открыт новым задачам</span></div></div></div></section>
-    <section id="contact" class="section shell contact-section"><div class="contact-box reveal-up"><p class="eyebrow">КОНТАКТЫ</p><h2>Есть идея?<br><span class="accent">Напиши мне.</span></h2><p data-edit-key="contact.text" data-edit-type="text">Расскажи, что хочешь сделать. Можно без длинного ТЗ — я сам помогу разобраться, что лучше собрать и как это реализовать.</p><div class="hero-actions contact-actions"><a class="button primary" href="https://t.me/Astra_GHT" target="_blank" rel="noreferrer">Написать в Telegram ↗</a></div></div></section>
+    <section class="hero wrap">
+      <div class="hero-text">
+        <p class="status"><span></span>Свободен для новых задач</p>
+        <h1>Делаю цифровые вещи, которые <em>работают</em> и&nbsp;выглядят достойно.</h1>
+        <p class="lead">Я Денис. Сайты, боты, автоматизация и моды для Minecraft — от первой идеи и архитектуры до готового продукта.</p>
+        <div class="cta">
+          <a class="btn solid" href="#works">Смотреть работы</a>
+          <a class="btn line" href="#contact">Обсудить проект</a>
+        </div>
+      </div>
+
+      <aside class="hero-card" aria-label="Коротко о стеке">
+        <div class="win-bar"><i></i><i></i><i></i><span>astra.config</span></div>
+        <pre class="code" id="code" aria-hidden="true"></pre>
+        <div class="orbit-badges">
+          <span style="--i:0">Web</span><span style="--i:1">Bots</span><span style="--i:2">Mods</span>
+        </div>
+      </aside>
+
+      <ul class="numbers">
+        <li><strong data-count="4">0</strong><span>направления работы</span></li>
+        <li><strong data-count="15">0</strong><span>технологий в арсенале</span></li>
+        <li><strong>RU / EN</strong><span>общаюсь на двух языках</span></li>
+        <li><strong>100%</strong><span>вовлечённость в задачу</span></li>
+      </ul>
+    </section>
+
+    <div class="marquee" aria-hidden="true"><div id="marquee"></div></div>
+
+    <section class="block wrap" id="works">
+      <header class="head">
+        <p class="kicker">01 — Работы</p>
+        <h2>Избранное из&nbsp;мастерской</h2>
+        <p>Четыре направления, в которых я чувствую себя увереннее всего. Нажмите на карточку, чтобы увидеть подробности.</p>
+      </header>
+      <div class="bento" id="bento"></div>
+    </section>
+
+    <section class="block craft" id="craft">
+      <div class="wrap">
+        <header class="head">
+          <p class="kicker">02 — Ремесло</p>
+          <h2>Что я&nbsp;умею делать руками</h2>
+        </header>
+        <ol class="rows" id="rows"></ol>
+      </div>
+    </section>
+
+    <section class="block wrap me" id="me">
+      <div class="me-lead">
+        <p class="kicker">03 — Автор</p>
+        <h2>Люблю разбираться в&nbsp;сложном и&nbsp;собирать из&nbsp;этого простое.</h2>
+      </div>
+      <div class="me-body">
+        <p>Большую часть времени я что-то строю, переделываю или изучаю. Мне мало просто написать код — важно понять систему целиком: как она устроена, как ею будут пользоваться и что можно улучшить.</p>
+        <p>Поэтому в моих проектах рядом живут интерфейсы, автоматизация, серверная логика и игровые механики.</p>
+        <ul class="facts">
+          <li><b>Подход</b>Сначала понять, потом строить</li>
+          <li><b>Языки</b>Русский · English</li>
+          <li><b>Формат</b>Один человек — весь цикл</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="block wrap" id="contact">
+      <div class="contact">
+        <p class="kicker light">04 — Связь</p>
+        <h2>Есть идея?<br>Давайте её соберём.</h2>
+        <p>Опишите задачу в паре строк — длинное ТЗ не нужно. Я помогу понять, что и как лучше сделать.</p>
+        <div class="cta">
+          <a class="btn light" href="https://t.me/Astra_GHT" target="_blank" rel="noreferrer">Написать в Telegram ↗</a>
+          <button class="btn ghost" id="copy" type="button" data-copy="@Astra_GHT">Скопировать @Astra_GHT</button>
+        </div>
+      </div>
+    </section>
   </main>
-  <footer class="site-footer shell"><span>© 2026 Astra-GHT</span><span>Advanced Software, Technology & Research</span></footer>
-  <aside id="visual-editor" aria-hidden="true"><div class="ve-head"><div><span>EDITOR</span><h3 id="ve-title">Выберите элемент</h3></div><button id="ve-close" aria-label="Закрыть" type="button">×</button></div><div class="ve-body" id="ve-body"></div></aside>
-  <div id="project-viewer" class="project-viewer" aria-hidden="true"></div>
-  <script src="script.js"></script><script src="studio-auth.js"></script><script src="project-manager.js"></script>
+
+  <footer class="foot wrap">
+    <span>© 2026 Astra-GHT</span>
+    <span>Advanced Software, Technology &amp; Research</span>
+    <a href="#top">Наверх ↑</a>
+  </footer>
+
+  <dialog id="modal" class="modal"><div id="modal-body"></div></dialog>
+  <script src="script.js"></script>
 </body>
 </html>

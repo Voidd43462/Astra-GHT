@@ -1,47 +1,106 @@
-document.addEventListener('DOMContentLoaded',()=>{
-  const root=document.documentElement,id=v=>document.getElementById(v);
-  const DATA_VERSION=2;
-  const defaults={hero:{eyebrow:'DIGITAL CREATOR · DEVELOPER',title:'Astra-GHT — Advanced Software, Technology & Research',lead:'Web-сайты, боты, автоматизация и игровые проекты. От идеи и архитектуры до готового продукта.'},stack:['Python','JavaScript','Minecraft','Web'],projects:{intro:'Подборка проектов и направлений, над которыми я работал.'},skills:{intro:'Собираю решения вокруг задачи, а не вокруг конкретного инструмента.'},about:{title:'Денис — разработчик, который любит превращать идеи в рабочие системы.',text:'Мне интересны продукты на стыке программирования, автоматизации, web и игр. Я люблю разбираться в архитектуре, собирать прототип, доводить интерфейс до аккуратного состояния и затем превращать всё это в поддерживаемый проект.'},contact:{text:'Напишите мне через Telegram — коротко опишите задачу.'},skillsData:{1:{title:'Web Development',text:'Лендинги, портфолио, панели, интерактивные интерфейсы и интеграции.'},2:{title:'Automation Systems',text:'Автоматизация процессов, планировщики и рабочие сценарии.'},3:{title:'Bots & Systems',text:'Discord/Telegram-боты, команды, роли, базы данных, планировщики и логи.'},4:{title:'GameDev & Minecraft',text:'Моды, механики, ресурсы, серверные системы, карты и прототипирование.'}},projectsData:{channel:{title:'Channel Manager',description:'Система управления Telegram-каналами: стратегия, планирование контента, аналитика, эксперименты и память проекта.',short:'Панель управления Telegram-каналом',details:'Система для планирования публикаций, аналитики и экспериментов.',tags:['Telegram','Automation','Analytics'],type:'channel',url:'',features:['Планирование контента','Аналитика','Эксперименты','Управление каналами'],images:[]},documentSync:{title:'DocumentSync',description:'Настольная программа для безопасной синхронизации повторяющихся данных между связанными Word-документами.',short:'Синхронизация комплектов Word-документов',details:'Пользователь меняет данные в главном документе, проверяет будущие изменения и одной командой обновляет связанные договоры, акты и приложения. История версий и документы хранятся локально.',tags:['.NET 8','Windows','Word'],type:'app',url:'',features:['Связывание полей Word','Предпросмотр изменений','История версий и откат','Автоматическая и ручная синхронизация','Локальное хранение данных','RU / EN интерфейс'],images:[]},bots:{title:'Bot Systems',description:'Discord и Telegram-боты с командами, логикой, автоматизацией, конфигурацией и web-панелями.',short:'Discord и Telegram-боты',details:'Набор систем для автоматизации, команд, ролей, логов и интеграций.',tags:['Python','Discord','Telegram'],type:'bots',url:'',features:['Команды','Автоматизация','Роли и права','Логи','Web-панели'],images:[]},web:{title:'Web Products',description:'Современные сайты и панели управления с адаптивной вёрсткой, анимациями и интеграциями.',short:'Интерактивные web-продукты',details:'Сайт или приложение можно открыть прямо внутри портфолио.',tags:['Frontend','UI/UX','Deploy'],type:'web',url:'',features:['Адаптивность','Интерактивность','Анимации','Интеграции'],images:[]}},accent:'#a7ff3f',motion:1,orbit:true,dataVersion:DATA_VERSION};
-  let state=clone(defaults),editMode=false,selected=null,dirty=false;
-  try{
-    const saved=JSON.parse(localStorage.getItem('astra-ght-studio')||'null');
-    if(saved){
-      const savedVersion=Number(saved.dataVersion||1);
-      const savedProjects=saved.projectsData&&typeof saved.projectsData==='object'&&!Array.isArray(saved.projectsData)?clone(saved.projectsData):null;
-      state=merge(state,saved);
-      if(savedProjects)state.projectsData=savedProjects;
-      if(savedVersion<DATA_VERSION){
-        if(state.projectsData?.sculk?.title==='Sculk Magic')delete state.projectsData.sculk;
-        if(!state.projectsData.documentSync)state.projectsData.documentSync=clone(defaults.projectsData.documentSync);
-        state.dataVersion=DATA_VERSION;
-        localStorage.setItem('astra-ght-studio',JSON.stringify(state));
-      }
-    }
-  }catch{}
-  const safe=v=>{const d=document.createElement('div');d.textContent=v??'';return d.innerHTML};
-  const esc=v=>safe(v).replace(/"/g,'&quot;');
-  function clone(v){return JSON.parse(JSON.stringify(v))}
-  function merge(base,extra){if(!extra||typeof extra!=='object')return base;Object.keys(extra).forEach(k=>{if(extra[k]&&typeof extra[k]==='object'&&!Array.isArray(extra[k]))base[k]=merge(base[k]||{},extra[k]);else base[k]=extra[k]});return base}
-  function artMarkup(p){if(p.type==='channel')return '<span class="art-label">CHANNEL MANAGER</span><div class="mini-dashboard"><div class="mini-head"><span>Growth</span><b>+34.8%</b></div><div class="mini-bars"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div>';if(p.type==='app')return '<span class="art-label">DOCUMENT SYNC</span><div class="terminal-card"><span>MASTER.DOCX</span><b>sync: ready</b><span>history: protected</span></div>';if(p.type==='bots')return '<span class="art-label">BOT SYSTEMS</span><div class="terminal-card"><span>&gt; system.start()</span><b>status: online</b><span>&gt; deploy.ready()</span></div>';return '<span class="art-label">WEB PRODUCTS</span><div class="browser-card"><i></i><i></i><i class="wide"></i><i class="hero-line"></i></div>'}
-  function renderProjects(){const grid=id('project-grid');if(!grid)return;grid.innerHTML=Object.entries(state.projectsData).map(([key,p])=>`<article class="project-card project-clickable" data-project="${esc(key)}" data-edit-project="${esc(key)}" tabindex="0" role="button"><div class="project-art art-${safe(p.type||'web')}">${artMarkup(p)}</div><div class="project-info"><div class="tags">${(p.tags||[]).map(t=>`<span>${safe(t)}</span>`).join('')}</div><h3>${safe(p.title)}</h3><p>${safe(p.description)}</p><span class="project-link">${p.type==='web'&&p.url?'Открыть сайт ↗':'Смотреть проект ↗'}</span></div></article>`).join('');bindProjectCards()}
-  function render(){const title=id('hero.title');if(title)title.innerHTML=safe(state.hero.title).replace('Advanced Software, Technology & Research','<span class="accent">Advanced Software, Technology & Research</span>');const eyebrow=document.querySelector('[data-edit-key="hero.eyebrow"]');if(eyebrow)eyebrow.innerHTML=`<span class="status-dot"></span>${safe(state.hero.eyebrow)}`;document.querySelector('[data-edit-key="hero.lead"]')?.replaceChildren(document.createTextNode(state.hero.lead));document.querySelector('[data-edit-key="about.title"]')?.replaceChildren(document.createTextNode(state.about.title));document.querySelector('[data-edit-key="about.text"]')?.replaceChildren(document.createTextNode(state.about.text));document.querySelector('[data-edit-key="projects.intro"]')?.replaceChildren(document.createTextNode(state.projects.intro));document.querySelector('[data-edit-key="skills.intro"]')?.replaceChildren(document.createTextNode(state.skills.intro));document.querySelector('[data-edit-key="contact.text"]')?.replaceChildren(document.createTextNode(state.contact.text));const stack=document.querySelector('[data-edit-key="stack"]');if(stack)stack.innerHTML=state.stack.map(x=>`<span>${safe(x)}</span>`).join('');Object.entries(state.skillsData).forEach(([n,d])=>{const el=document.querySelector(`[data-edit-key="skills.${n}"]`);if(el){el.querySelector('h3').textContent=d.title;el.querySelector('p').textContent=d.text}});renderProjects();root.style.setProperty('--accent',state.accent);document.querySelector('.hero-visual')?.classList.toggle('disabled',!state.orbit);bindEditorTargets()}
-  render();
-  if(window.gsap&&window.ScrollTrigger){gsap.registerPlugin(ScrollTrigger);const tl=gsap.timeline({defaults:{ease:'power3.out'}});tl.from('.site-header',{y:-20,opacity:0,duration:.55}).from('.hero-copy>*',{y:18,opacity:0,stagger:.07,duration:.42},'-=.2').from('.hero-visual',{scale:.97,opacity:0,duration:.7},'-=.5');gsap.utils.toArray('.reveal-up').forEach(el=>gsap.fromTo(el,{y:20,opacity:0},{y:0,opacity:1,duration:.58,scrollTrigger:{trigger:el,start:'top 90%',once:true}}));gsap.to('.ambient-a',{x:70,y:40,scrollTrigger:{trigger:'.hero',start:'top top',end:'bottom top',scrub:1}});gsap.to('.ambient-b',{x:-70,y:-20,scrollTrigger:{trigger:'.skills-section',start:'top bottom',end:'bottom top',scrub:1}})}else document.querySelectorAll('.reveal-up').forEach(el=>el.style.opacity=1);const dash=document.querySelector('.orbit-dash');if(window.gsap&&dash)gsap.to(dash,{rotation:360,transformOrigin:'50% 50%',duration:28,repeat:-1,ease:'none'});
-  const canvas=id('cosmic-field'),ctx=canvas?.getContext('2d');let particles=[];function resize(){if(!canvas||!ctx)return;const r=Math.min(devicePixelRatio||1,2);canvas.width=innerWidth*r;canvas.height=innerHeight*r;canvas.style.width=innerWidth+'px';canvas.style.height=innerHeight+'px';ctx.setTransform(r,0,0,r,0,0);particles=Array.from({length:Math.min(64,Math.max(28,Math.floor(innerWidth/26)))},()=>({x:Math.random()*innerWidth,y:Math.random()*innerHeight,r:.2+Math.random()*1.1,vx:(Math.random()-.5)*.11,vy:(Math.random()-.5)*.11}))}function draw(){if(!ctx)return;ctx.clearRect(0,0,innerWidth,innerHeight);for(const p of particles){p.x+=p.vx;p.y+=p.vy;if(p.x<0)p.x=innerWidth;if(p.x>innerWidth)p.x=0;if(p.y<0)p.y=innerHeight;if(p.y>innerHeight)p.y=0;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle='rgba(185,255,105,.3)';ctx.fill()}requestAnimationFrame(draw)}if(canvas){resize();draw();addEventListener('resize',resize)}
-  const editor=id('visual-editor'),editorMode=id('editor-mode'),veBody=id('ve-body'),editorTitle=id('ve-title'),selection=id('editor-selection'),viewer=id('project-viewer');
-  function enterEditor(){if(editMode)return;editMode=true;dirty=false;document.body.classList.add('editing');editorMode.classList.add('active');editorMode.setAttribute('aria-hidden','false');editor.classList.remove('open');selection.textContent='Выберите элемент на странице';bindEditorTargets();bindProjectCards()}
-  function exitEditor(){if(dirty&&!confirm('Есть несохранённые изменения. Выйти без сохранения?'))return;editMode=false;selected=null;dirty=false;editor.classList.remove('open');editorMode.classList.remove('active');editorMode.setAttribute('aria-hidden','true');document.body.classList.remove('editing');document.querySelectorAll('.editor-target').forEach(el=>el.classList.remove('editor-target'));window.dispatchEvent(new Event('astra:studio-logout'))}
-  function openInspector(kind,key,element){selected={kind,key,element};editor.classList.add('open');editor.setAttribute('aria-hidden','false');editorTitle.textContent=kind==='project'?'Проект':kind==='stack'?'Стек':kind==='skill'?'Навык':'Элемент';selection.textContent=kind==='project'?'Редактирование проекта':'Редактирование элемента';buildInspector()}
-  function bindEditorTargets(){if(!editMode)return;document.querySelectorAll('[data-edit-key],[data-edit-project]').forEach(el=>{el.classList.add('editor-target');el.onclick=e=>{if(!editMode)return;e.preventDefault();e.stopPropagation();if(el.dataset.editProject)openInspector('project',el.dataset.editProject,el);else openInspector(el.dataset.editType||'text',el.dataset.editKey,el)}})}
-  function inputRow(label,value,key,type='text'){return `<label class="ve-field"><span>${label}</span>${type==='textarea'?`<textarea id="${key}">${safe(value)}</textarea>`:`<input id="${key}" value="${esc(value)}">`}</label>`}
-  function buildInspector(){if(!selected)return;if(selected.kind==='project'){const p=state.projectsData[selected.key];if(!p)return;veBody.innerHTML=`<div class="ve-section"><div class="ve-kicker">PROJECT / ${safe(selected.key.toUpperCase())}</div>${inputRow('Название',p.title,'ve-p-title')}${inputRow('Короткое описание',p.short||'','ve-p-short','textarea')}${inputRow('Описание',p.description,'ve-p-desc','textarea')}${inputRow('Теги',(p.tags||[]).join(', '),'ve-p-tags')}${inputRow('URL сайта',p.url||'','ve-p-url')}${inputRow('Подробности',p.details||'','ve-p-details','textarea')}${inputRow('Функции через запятую',(p.features||[]).join(', '),'ve-p-features')}${inputRow('Фото URL через запятую',(p.images||[]).join(', '),'ve-p-images','textarea')}<div class="ve-actions"><button class="ve-save" id="ve-apply-project">Применить</button><button class="ve-danger" id="ve-delete-project">Удалить карточку</button></div></div>`;id('ve-apply-project').onclick=()=>{p.title=id('ve-p-title').value.trim()||p.title;p.short=id('ve-p-short').value.trim();p.description=id('ve-p-desc').value.trim();p.tags=id('ve-p-tags').value.split(',').map(x=>x.trim()).filter(Boolean);p.url=id('ve-p-url').value.trim();p.details=id('ve-p-details').value.trim();p.features=id('ve-p-features').value.split(',').map(x=>x.trim()).filter(Boolean);p.images=id('ve-p-images').value.split(',').map(x=>x.trim()).filter(Boolean);dirty=true;render();openInspector('project',selected.key,document.querySelector(`[data-edit-project="${CSS.escape(selected.key)}"]`))};id('ve-delete-project').onclick=()=>{if(!confirm(`Удалить проект «${p.title}»?`))return;delete state.projectsData[selected.key];dirty=true;editor.classList.remove('open');render()};return}
-    if(selected.kind==='list'){veBody.innerHTML=`<div class="ve-section"><div class="ve-kicker">TECH STACK</div>${inputRow('Технологии',state.stack.join(', '),'ve-stack','textarea')}<div class="ve-actions"><button class="ve-save" id="ve-apply">Применить</button></div></div>`;id('ve-apply').onclick=()=>{state.stack=id('ve-stack').value.split(',').map(x=>x.trim()).filter(Boolean);dirty=true;render()};return}
-    if(selected.kind==='skill'){const n=selected.key.split('.')[1],d=state.skillsData[n];veBody.innerHTML=`<div class="ve-section"><div class="ve-kicker">SKILL ${n}</div>${inputRow('Название',d.title,'ve-s-title')}${inputRow('Описание',d.text,'ve-s-text','textarea')}<div class="ve-actions"><button class="ve-save" id="ve-apply">Применить</button></div></div>`;id('ve-apply').onclick=()=>{d.title=id('ve-s-title').value.trim()||d.title;d.text=id('ve-s-text').value.trim();dirty=true;render()};return}
-    const [group,prop]=selected.key.split('.');const value=state[group]?.[prop]??'';veBody.innerHTML=`<div class="ve-section"><div class="ve-kicker">TEXT</div>${inputRow('Содержимое',value,'ve-text','textarea')}<div class="ve-actions"><button class="ve-save" id="ve-apply">Применить</button></div></div>`;id('ve-apply').onclick=()=>{if(state[group])state[group][prop]=id('ve-text').value;dirty=true;render()}
-  }
-  function bindProjectCards(){document.querySelectorAll('.project-clickable').forEach(card=>{card.onclick=()=>{if(!editMode)openProject(card.dataset.project)};card.onkeydown=e=>{if((e.key==='Enter'||e.key===' ')&&!editMode){e.preventDefault();openProject(card.dataset.project)}}})}
-  function openProject(key){const p=state.projectsData[key];if(!p||!viewer)return;if(p.type==='web'&&p.url){viewer.innerHTML=`<div class="pv-shell pv-browser"><div class="pv-top"><div><span class="pv-dot"></span><strong>${safe(p.title)}</strong></div><div class="pv-actions"><a href="${esc(p.url)}" target="_blank" rel="noreferrer">Открыть отдельно ↗</a><button data-pv-close>Закрыть ×</button></div></div><iframe src="${esc(p.url)}" title="${esc(p.title)}" allow="fullscreen"></iframe></div>`}else{const images=(p.images||[]).filter(Boolean);viewer.innerHTML=`<div class="pv-shell pv-details"><div class="pv-top"><div><span class="pv-kicker">PROJECT</span><strong>${safe(p.title)}</strong></div><button data-pv-close>Закрыть ×</button></div><div class="pv-content"><div class="pv-gallery">${images.length?images.map((src,i)=>`<img src="${esc(src)}" alt="${esc(p.title)} — фото ${i+1}" loading="lazy">`).join(''):'<div class="pv-placeholder">Добавь фотографии проекта через Astra Studio</div>'}</div><div class="pv-copy"><div class="tags">${(p.tags||[]).map(t=>`<span>${safe(t)}</span>`).join('')}</div><p class="pv-short">${safe(p.short||'Проект')}</p><p>${safe(p.details||p.description)}</p><h4>Что внутри</h4><div class="pv-features">${(p.features||[]).map(x=>`<span>${safe(x)}</span>`).join('')}</div></div></div></div>`}viewer.classList.add('open');viewer.setAttribute('aria-hidden','false');viewer.querySelector('[data-pv-close]')?.addEventListener('click',closeProject);viewer.onclick=e=>{if(e.target===viewer)closeProject()}}
-  function closeProject(){viewer?.classList.remove('open');viewer?.setAttribute('aria-hidden','true')}
-  document.addEventListener('click',e=>{if(!editMode)return;if(e.target.closest('.site-header,#visual-editor,#editor-mode,.project-create'))return;const t=e.target.closest('[data-edit-key],[data-edit-project]');if(t){e.preventDefault();e.stopPropagation();if(t.dataset.editProject)openInspector('project',t.dataset.editProject,t);else openInspector(t.dataset.editType||'text',t.dataset.editKey,t)}},true);
-  id('editor-exit')?.addEventListener('click',exitEditor);id('editor-save')?.addEventListener('click',()=>{state.dataVersion=DATA_VERSION;localStorage.setItem('astra-ght-studio',JSON.stringify(state));dirty=false;selection.textContent='Изменения сохранены в этом браузере'});id('ve-close')?.addEventListener('click',()=>editor.classList.remove('open'));viewer?.addEventListener('click',e=>{if(e.target===viewer)closeProject()});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&viewer?.classList.contains('open'))closeProject()});window.addEventListener('astra:studio-authenticated',enterEditor);
-});
+(() => {
+  const $ = (s, r = document) => r.querySelector(s);
+  const esc = v => String(v).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+  const projects = [
+    { title: 'DocumentSync', color: 'var(--violet)', short: 'Синхронизация комплектов Word-документов',
+      text: 'Настольная программа для безопасной синхронизации повторяющихся данных между связанными Word-документами. Меняете данные в главном документе, проверяете будущие правки и одной командой обновляете договоры, акты и приложения.',
+      tags: ['.NET 8', 'Windows', 'Word'],
+      features: ['Связывание полей Word', 'Предпросмотр изменений', 'История версий и откат', 'Автоматическая и ручная синхронизация', 'Локальное хранение данных', 'RU / EN интерфейс'] },
+    { title: 'Channel Manager', color: 'var(--coral)', short: 'Панель управления Telegram-каналом',
+      text: 'Система управления Telegram-каналами: стратегия, планирование контента, аналитика, эксперименты и память проекта.',
+      tags: ['Telegram', 'Automation', 'Analytics'],
+      features: ['Планирование контента', 'Аналитика', 'Эксперименты', 'Управление каналами'] },
+    { title: 'Bot Systems', color: 'var(--lime)', short: 'Discord и Telegram-боты',
+      text: 'Discord и Telegram-боты с командами, логикой, автоматизацией, конфигурацией и web-панелями.',
+      tags: ['Python', 'Discord', 'Telegram'],
+      features: ['Команды', 'Автоматизация', 'Роли и права', 'Логи', 'Web-панели'] },
+    { title: 'Web Products', color: 'var(--dark)', short: 'Интерактивные сайты и панели управления',
+      text: 'Современные сайты и панели управления с адаптивной вёрсткой, анимациями и интеграциями — от лендинга до полноценного приложения.',
+      tags: ['Frontend', 'UI/UX', 'Deploy'],
+      features: ['Адаптивность', 'Интерактивность', 'Анимации', 'Интеграции'] }
+  ];
+
+  const craft = [
+    ['Сайты и интерфейсы', 'Лендинги, портфолио, панели управления и интерактивные веб-приложения.'],
+    ['Автоматизация', 'Убираю рутину: планировщики, сценарии и связки между сервисами.'],
+    ['Боты и системы', 'Discord и Telegram-боты: команды, роли, базы данных, логи и web-панели.'],
+    ['Моды и игры', 'Minecraft-моды, механики, ресурсы, серверные системы и прототипы.']
+  ];
+
+  const tech = ['Python', 'JavaScript', 'React', 'Node.js', 'NeoForge', 'Fabric', 'Forge', 'GeckoLib', 'discord.py', 'Telegram Bot API', 'OpenAI API', 'Gemini API', 'Git', 'GitHub', 'Vercel', 'systemd'];
+
+  // bento
+  $('#bento').innerHTML = projects.map((p, i) => `
+    <button class="tile rv" type="button" data-i="${i}" style="transition-delay:${i * 80}ms">
+      <span class="deco"></span><span class="num">0${i + 1}</span><span class="arrow">↗</span>
+      <h3>${esc(p.title)}</h3><p>${esc(p.short)}</p>
+      <div class="tags">${p.tags.map(t => `<span>${esc(t)}</span>`).join('')}</div>
+    </button>`).join('');
+
+  // craft rows
+  $('#rows').innerHTML = craft.map(([t, d], i) => `
+    <li class="row rv"><span class="n">0${i + 1}</span><h3>${esc(t)}</h3><p>${esc(d)}</p><span class="go">→</span></li>`).join('');
+
+  // marquee
+  const m = tech.map(t => `<span>${esc(t)}</span>`).join('');
+  $('#marquee').innerHTML = m + m;
+
+  // modal
+  const modal = $('#modal');
+  $('#bento').addEventListener('click', e => {
+    const t = e.target.closest('.tile'); if (!t) return;
+    const p = projects[t.dataset.i];
+    const fg = p.color === 'var(--lime)' ? '#16141c' : p.color === 'var(--coral)' ? '#16141c' : '#fff';
+    $('#modal-body').innerHTML = `
+      <div class="m-top" style="background:${p.color};color:${fg}">
+        <small>0${+t.dataset.i + 1} / проект</small><h3>${esc(p.title)}</h3>
+        <div class="tags">${p.tags.map(x => `<span>${esc(x)}</span>`).join('')}</div>
+        <button class="m-x" type="button" aria-label="Закрыть">×</button>
+      </div>
+      <div class="m-body"><p>${esc(p.text)}</p><ul>${p.features.map(f => `<li>${esc(f)}</li>`).join('')}</ul></div>`;
+    modal.showModal();
+  });
+  modal.addEventListener('click', e => { if (e.target === modal || e.target.closest('.m-x')) modal.close(); });
+
+  // typing code card
+  const lines = [
+    '<span class="c">// кто я</span>',
+    '<span class="k">const</span> astra = {',
+    '  name: <span class="s">"Денис"</span>,',
+    '  focus: [<span class="s">"web"</span>, <span class="s">"bots"</span>,',
+    '          <span class="s">"automation"</span>, <span class="s">"mods"</span>],',
+    '  langs: [<span class="s">"ru"</span>, <span class="s">"en"</span>],',
+    '  status: <span class="s">"open to work"</span>',
+    '};'
+  ];
+  const code = $('#code'); let li = 0;
+  const reduce = matchMedia('(prefers-reduced-motion:reduce)').matches;
+  if (reduce) code.innerHTML = lines.join('\n');
+  else (function tick() { code.innerHTML = lines.slice(0, ++li).join('\n'); if (li < lines.length) setTimeout(tick, 420); })();
+
+  // reveal + counters
+  const io = new IntersectionObserver(es => es.forEach(en => {
+    if (!en.isIntersecting) return;
+    en.target.classList.add('in'); io.unobserve(en.target);
+  }), { threshold: .15 });
+  document.querySelectorAll('.rv,.head,.me > *,.contact').forEach(el => { el.classList.add('rv'); io.observe(el); });
+
+  document.querySelectorAll('[data-count]').forEach(el => {
+    const to = +el.dataset.count, t0 = performance.now();
+    (function f(t) { const k = Math.min(1, (t - t0) / 1200); el.textContent = Math.round(to * (1 - Math.pow(1 - k, 3))); if (k < 1) requestAnimationFrame(f); })(t0);
+  });
+
+  // theme
+  const root = document.documentElement;
+  const setTheme = t => { root.dataset.theme = t; try { localStorage.setItem('astra-theme', t); } catch {} };
+  let saved; try { saved = localStorage.getItem('astra-theme'); } catch {}
+  setTheme(saved || (matchMedia('(prefers-color-scheme:dark)').matches ? 'dark' : 'light'));
+  $('#theme').addEventListener('click', () => setTheme(root.dataset.theme === 'dark' ? 'light' : 'dark'));
+
+  // copy
+  $('#copy').addEventListener('click', e => {
+    const b = e.currentTarget, old = b.textContent;
+    navigator.clipboard?.writeText(b.dataset.copy).then(() => { b.textContent = 'Скопировано ✓'; setTimeout(() => b.textContent = old, 1600); });
+  });
+})();
