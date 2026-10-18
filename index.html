@@ -21,6 +21,7 @@
       <a href="#contact">Связь</a>
     </nav>
     <div class="nav-end">
+      <button class="studio-btn" id="studio-open" type="button">Studio</button>
       <button class="theme" id="theme" type="button" aria-label="Сменить тему"><span></span></button>
       <a class="pill" href="https://t.me/Astra_GHT" target="_blank" rel="noreferrer">Написать ↗</a>
     </div>
@@ -111,6 +112,9 @@
   </footer>
 
   <dialog id="modal" class="modal"><div id="modal-body"></div></dialog>
+  <dialog id="viewer" class="viewer"><div id="viewer-body"></div></dialog>
+  <dialog id="login" class="modal login"><form id="login-form"><p class="kicker">Astra Studio · private</p><h3>Вход в Studio</h3><label>Пароль<input id="login-pass" type="password" autocomplete="current-password" required></label><p class="err" id="login-err" aria-live="polite"></p><div class="cta"><button class="btn solid" type="submit">Войти</button><button class="btn line" type="button" id="login-cancel">Отмена</button></div></form></dialog>
+  <aside id="studio" class="studio" aria-hidden="true"></aside>
   <script src="script.js"></script>
 </body>
 </html>
